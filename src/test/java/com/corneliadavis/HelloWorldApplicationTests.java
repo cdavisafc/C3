@@ -17,9 +17,11 @@ public class HelloWorldApplicationTests {
 	}
 
 	@Test
-	public void	helloControllerTest() {
+	public void	helloControllerTestDefault() {
 		HelloController helloController = new HelloController();
-		assertEquals("Hello World!", helloController.hello());
+		String greetee = System.getenv("WHOTOGREET");
+		if (greetee == null) greetee = "World";
+		assertEquals("Hello "+greetee+"!", helloController.hello());
 	}
 
 }

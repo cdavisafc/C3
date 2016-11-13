@@ -10,7 +10,9 @@ public class HelloController {
 
     @RequestMapping("/")
     public String hello() {
-        return "Hello World!";
+        String greetee = System.getenv("WHOTOGREET");
+        if (greetee == null) greetee = "World";
+        return "Hello " + greetee + "!";
     }
 
 
