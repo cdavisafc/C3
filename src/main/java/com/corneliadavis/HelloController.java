@@ -1,24 +1,27 @@
 package com.corneliadavis;
 
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 
-@Controller
+@RestController
 public class HelloController {
 
     @RequestMapping("/")
-    public String hello(@CookieValue(value = "userToken", required=false) String token, Model model) {
-		String name = "World";
-		if (token == "1234") {
-			name = "Cornelia";
+    public String hello(@CookieValue(value = "userToken", required=false) String token, HttpServletResponse response) {
+		if (token == null)
+			response.setStatus(401);
+		else {
+			String name = HelloWorldApplication.validTokens.get(token);
+			if (name == null)
+				response.setStatus(401);
+			else
+				return "Hello " + name +"!";
 		}
-		model.addAttribute("name", name);
-        return "greeting";
+		return null;
     }
 
 }
