@@ -59,11 +59,16 @@ public class HelloWorldApplicationTests {
 	@Test
 	public void	helloValidToken() throws Exception {
 		assertFalse(HelloWorldApplication.validTokens.isEmpty());
+
 		String validToken = HelloWorldApplication.validTokens.keySet().iterator().next();
 		String validName = HelloWorldApplication.validTokens.get(validToken);
+
+		String specialization = System.getenv("SPECIALIZATION");
+		if (specialization == null) specialization = "Education";
+
 		mockMvc.perform(get("/").cookie(new Cookie("userToken", validToken)))
-			.andExpect(content().string(containsString("Hello "+validName+"!")));
+				.andExpect(content().string(containsString("Hello "+validName+"!")))
+				.andExpect(content().string(containsString(specialization)));
 	}
-	
-	
+
 }

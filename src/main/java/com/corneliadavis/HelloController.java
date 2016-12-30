@@ -11,15 +11,25 @@ import java.util.Map;
 public class HelloController {
 
     @RequestMapping("/")
-    public String hello(@CookieValue(value = "userToken", required=false) String token, HttpServletResponse response) {
-		if (token == null)
+    public Greeting hello(@CookieValue(value = "userToken", required=false) String token, HttpServletResponse response) {
+
+        String specialization;
+        specialization = System.getenv("SPECIALIZATION");
+        if (specialization == null)
+            specialization = "Education"; // default specialization
+
+        if (token == null)
 			response.setStatus(401);
 		else {
 			String name = HelloWorldApplication.validTokens.get(token);
 			if (name == null)
 				response.setStatus(401);
-			else
-				return "Hello " + name +"!";
+			else {
+			    Greeting greeting = new Greeting();
+			    greeting.setGreeting("Hello " + name + "!");
+			    greeting.setSpecialization(specialization);
+			    return greeting;
+            }
 		}
 		return null;
     }
