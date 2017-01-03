@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.RestController;
@@ -13,6 +14,7 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpServletResponse;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -29,8 +31,8 @@ public class HelloController {
 	@Value("${specialization}")
 	private String specialization;
 
-	@RequestMapping("/")
-    public Greeting hello(@CookieValue(value = "userToken", required=false) String token, HttpServletResponse response) throws Exception {
+    @RequestMapping("/")
+    public Greeting hello(@CookieValue(value = "userToken", required=false) String token, HttpServletResponse response) {
 
         if (token == null)
 			response.setStatus(401);
