@@ -12,11 +12,13 @@ public class HelloController {
     @RequestMapping("/")
     public Greeting hello(HttpServletResponse response) {
 
-    	String specialization = "Science";
+    	String specialization;
+		specialization = System.getenv("SPECIALIZATION");
+		if (specialization == null)
+		    specialization = "Science"; // default specialization
 		response.setStatus(200);
 		Greeting greeting = new Greeting();
-		greeting.setGreeting("Hello World!");
-		greeting.setSpecialization(specialization);
+		greeting.setGreeting("Hello " + specialization + " Enthusiast!");
 
 		return greeting;
     }
