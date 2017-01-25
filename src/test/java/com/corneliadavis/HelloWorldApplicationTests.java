@@ -33,18 +33,43 @@ public class HelloWorldApplicationTests {
 	}
 
 	@Test
-	public void	helloWorld() throws Exception {
+	public void	helloNoToken() throws Exception {
+		mockMvc.perform(get("/"))
+				.andExpect(status().isUnauthorized());
+	}
+
+	@Test
+	public void	helloInvalidToken() throws Exception {
+		mockMvc.perform(get("/").cookie(new Cookie("userToken", "1234")))
+				.andExpect(status().isUnauthorized());
+	}
+
+	@Test
+	public void	loginNoName() throws Exception {
+		mockMvc.perform(post("/login"))
+			.andExpect(status().is4xxClientError());
+	}
+
+	@Test
+	public void	loginNamed() throws Exception {
+		mockMvc.perform(post("/login").param("name", "Cornelia"))
+			.andExpect(cookie().exists("userToken"));
+	}
+	
+	@Test
+	public void	helloValidToken() throws Exception {
+		assertFalse(HelloWorldApplication.validTokens.isEmpty());
+
+		String validToken = HelloWorldApplication.validTokens.keySet().iterator().next();
+		String validName = HelloWorldApplication.validTokens.get(validToken);
 
 		String specialization = System.getenv("SPECIALIZATION");
 		if (specialization == null) specialization = "Science";
 
-		mockMvc.perform(get("/"))
+		mockMvc.perform(get("/").cookie(new Cookie("userToken", validToken)))
 				.andExpect(status().isOk())
-				.andExpect(content().string(containsString("Hello " + specialization +" Enthusiast!")))
+				.andExpect(content().string(containsString("Hello "+validName+"!")))
 				.andExpect(content().string(containsString(specialization)));
 	}
-
-	// test books
-
 
 }

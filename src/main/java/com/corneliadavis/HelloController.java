@@ -2,6 +2,7 @@ package com.corneliadavis;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.CookieValue;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -10,16 +11,26 @@ import javax.servlet.http.HttpServletResponse;
 public class HelloController {
 
     @RequestMapping("/")
-    public Greeting hello(HttpServletResponse response) {
+    public Greeting hello(@CookieValue(value = "userToken", required=false) String token, HttpServletResponse response) {
 
-    	String specialization;
-		specialization = System.getenv("SPECIALIZATION");
-		if (specialization == null)
-		    specialization = "Science"; // default specialization
-		response.setStatus(200);
-		Greeting greeting = new Greeting();
-		greeting.setGreeting("Hello " + specialization + " Enthusiast!");
-
-		return greeting;
-    }
+        if (token == null)
+			response.setStatus(401);
+        else {
+            String name = HelloWorldApplication.validTokens.get(token);
+            if (name == null)
+				response.setStatus(401);
+             else {
+				 String specialization;
+				 specialization = System.getenv("SPECIALIZATION");
+				 if (specialization == null)
+		    		 specialization = "Science"; // default specialization
+				 Greeting greeting = new Greeting();
+				 greeting.setGreeting("Hello " + name + "!");
+				 greeting.setSpecialization(specialization);
+				 response.setStatus(200);
+				 return greeting;
+			 }
+    	 }
+		 return null;
+	 }
 }
